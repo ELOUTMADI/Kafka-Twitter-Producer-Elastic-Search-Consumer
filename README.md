@@ -48,3 +48,48 @@ This method serves as the entry point for the program. It does the following:
    3. Keeps track of the number of records processed and, once a certain number have been processed, sends a bulk index request to Elasticsearch to improve performance.
 4. Continues to run and process records until it is manually stopped.
 
+# Twitter to Kafka Producer
+
+This code is a Java program that connects to the Twitter streaming API, consumes tweets that match a given set of keywords, and produces these tweets to a Kafka topic.
+
+## Dependencies
+
+- `com.google.common.collect.Lists` - for creating lists of keywords to track
+- `com.twitter.hbc` - for interacting with the Twitter streaming API
+- `org.apache.kafka` - for interacting with Kafka
+- `org.slf4j` - for logging
+
+## Functions
+
+### `run` method
+
+This method serves as the entry point for the program. It does the following:
+
+1. Creates a `BlockingQueue` and a `Client` object using the `createTwitterClient` method.
+2. Connects the client to the Twitter streaming API.
+3. Creates a `KafkaProducer` object using the `createKafkaProducer` method.
+4. Adds a shutdown hook that stops the client and closes the producer when the program is interrupted.
+5. Enters a loop that continually polls the `BlockingQueue` for new tweets and produces each tweet to the Kafka topic as it comes in. The loop exits when the client is done.
+
+### `createTwitterClient`
+
+This method returns a `Client` object used to connect to the Twitter streaming API. It takes in the following argument:
+
+- `msgQueue`: a `BlockingQueue` to store tweets in
+
+The method uses a set of predetermined constants (e.g. consumer key, consumer secret) and the input `BlockingQueue` to create the `Client` object. It sets up the client to track a predetermined list of keywords and to use OAuth 1.0a for authentication.
+
+### `createKafkaProducer`
+
+This method returns a `KafkaProducer` object used to produce tweets to a Kafka topic. It uses a set of predetermined properties to create the `KafkaProducer` object.
+
+## `main` method
+
+This method serves as the entry point for the program. It calls the `run` method to start the program.
+
+## Notes
+
+- The program uses the `slf4j` library for logging.
+- The constants (e.g. consumer key, consumer secret) and properties (e.g. bootstrap servers) used in this program should be stored in a configuration file in a production environment.
+
+
